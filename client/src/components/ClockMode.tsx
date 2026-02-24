@@ -9,47 +9,42 @@ interface ClockModeProps {
 }
 
 const AnalogClock = ({ hours, minutes }: { hours: number; minutes: number }) => {
-  const hourDeg = (hours % 12) * 30 + minutes * 0.5;
-  const minuteDeg = minutes * 6;
+  const hourAngle = (hours % 12) * 30 + minutes * 0.5;
+  const minuteAngle = minutes * 6;
 
   return (
     <div className="flex justify-center">
-      <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-full border-8 border-primary bg-white shadow-lg">
-        {/* Ziffern */}
-        {[12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((num, i) => {
-          const angle = (i * 30 - 90) * (Math.PI / 180);
-          const x = 50 + 35 * Math.cos(angle);
-          const y = 50 + 35 * Math.sin(angle);
-          return (
-            <div
-              key={num}
-              className="absolute text-2xl md:text-3xl font-bold text-primary"
-              style={{
-                left: `${x}%`,
-                top: `${y}%`,
-                transform: 'translate(-50%, -50%)'
-              }}
-            >
-              {num}
-            </div>
-          );
+      <svg viewBox="0 0 200 200" width="200" height="200">
+        {/* Uhrenkreis */}
+        <circle cx="100" cy="100" r="90" fill="white" stroke="#FF6B4A" strokeWidth="4" />
+        
+        {/* Zahlen 1-12 */}
+        {[...Array(12)].map((_, i) => {
+          const angle = ((i + 1) * 30 - 90) * (Math.PI / 180);
+          const x = 100 + 70 * Math.cos(angle);
+          const y = 100 + 70 * Math.sin(angle);
+          return <text key={i} x={x} y={y} textAnchor="middle" dominantBaseline="central" fontSize="16" fontWeight="bold" fill="#FF6B4A">{i + 1}</text>;
         })}
-
-        {/* Mittelpunkt */}
-        <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-primary rounded-full transform -translate-x-1/2 -translate-y-1/2 z-10" />
-
+        
         {/* Stundenzeiger */}
-        <div
-          className="absolute top-1/2 left-1/2 w-2 h-20 md:h-28 bg-primary rounded-full origin-bottom transform -translate-x-1/2 -translate-y-full"
-          style={{ transform: `translate(-50%, -100%) rotate(${hourDeg}deg)` }}
+        <line 
+          x1="100" y1="100" 
+          x2={100 + 45 * Math.cos((hourAngle - 90) * Math.PI / 180)} 
+          y2={100 + 45 * Math.sin((hourAngle - 90) * Math.PI / 180)} 
+          stroke="#FF6B4A" strokeWidth="4" strokeLinecap="round" 
         />
-
+        
         {/* Minutenzeiger */}
-        <div
-          className="absolute top-1/2 left-1/2 w-1.5 h-24 md:h-32 bg-secondary rounded-full origin-bottom transform -translate-x-1/2 -translate-y-full"
-          style={{ transform: `translate(-50%, -100%) rotate(${minuteDeg}deg)` }}
+        <line 
+          x1="100" y1="100" 
+          x2={100 + 65 * Math.cos((minuteAngle - 90) * Math.PI / 180)} 
+          y2={100 + 65 * Math.sin((minuteAngle - 90) * Math.PI / 180)} 
+          stroke="#4A90E2" strokeWidth="3" strokeLinecap="round" 
         />
-      </div>
+        
+        {/* Mittelpunkt */}
+        <circle cx="100" cy="100" r="4" fill="#FF6B4A" />
+      </svg>
     </div>
   );
 };
